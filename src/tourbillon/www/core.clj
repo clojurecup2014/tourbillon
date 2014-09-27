@@ -4,10 +4,15 @@
             [compojure.core :refer :all]
             [compojure.route :as route]
             [compojure.handler :as handler]
+            [ring.util.response :refer [content-type
+                                        resource-response]]
             [taoensso.timbre :as log]))
 
 (defroutes web
-  (GET "/" [] "<h1>Tourbillon. Really cool stuff to come...</h1>")
+  (GET "/" [] (content-type
+                (resource-response "index.html" {:root "public"})
+                "text/html"))
+  (route/resources "/assets")
   (route/not-found "<h2>Still haven't found what you're lookin' for?</h2>"))
 
 (def app

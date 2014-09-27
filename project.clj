@@ -16,7 +16,8 @@
                  [compojure "1.1.9"]
                  [cheshire "5.3.1"]
                  [org.clojure/tools.namespace "0.2.7"]
-                 [environ "1.0.0"]]
+                 [environ "1.0.0"]
+                 [overtone/at-at "1.2.0"]]
 
   :main tourbillon.main
 

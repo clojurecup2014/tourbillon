@@ -9,20 +9,18 @@
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [com.stuartsierra/component "0.2.2"]
                  [http-kit "2.1.16"]
-                 [log4j "1.2.17" :exclusions [javax.mail/mail
-                                              javax.jms/jms
-                                              com.sun.jdmk/jmxtools
-                                              com.sun.jmx/jmxri]]
+                 [com.taoensso/timbre "3.3.1"]
                  [ring-server "0.3.1"]
                  [ring/ring-ssl "0.2.1"]
                  [ring/ring-json "0.3.1"]
                  [compojure "1.1.9"]
                  [cheshire "5.3.1"]
-                 [org.clojure/tools.namespace "0.2.7"]]
+                 [org.clojure/tools.namespace "0.2.7"]
+                 [environ "1.0.0"]]
 
   :main tourbillon.main
 
-  :plugins [[lein-environ "0.4.0"]]
+  :plugins [[lein-environ "1.0.0"]]
 
   :profiles {:uberjar {:aot :all},
              :production {:ring {:open-browser? false

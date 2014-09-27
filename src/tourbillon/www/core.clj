@@ -3,7 +3,8 @@
             [org.httpkit.server :as server]
             [compojure.core :refer :all]
             [compojure.route :as route]
-            [compojure.handler :as handler]))
+            [compojure.handler :as handler]
+            [taoensso.timbre :as log]))
 
 (defroutes web
   (GET "/" [] "<h1>Tourbillon. Really cool stuff to come...</h1>")
@@ -16,13 +17,13 @@
   component/Lifecycle
 
   (start [component]
-    (println "Starting web server")
+    (log/info "Starting web server")
 
     (let [conn (server/run-server #'app {:ip ip :port port})]
       (assoc component :connection conn)))
 
   (stop [component]
-    (println "Stopping web server")
+    (log/info "Stopping web server")
 
         (connection)
         (dissoc component :connection)))

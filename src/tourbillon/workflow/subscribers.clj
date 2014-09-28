@@ -1,5 +1,7 @@
 (ns tourbillon.workflow.subscribers
-  (:require [taoensso.timbre :as log]))
+  (:require [org.httpkit.client :as http]
+            [taoensso.timbre :as log]
+            [clojure.string :refer [lower-case]]))
 
 (defmulti notify! (fn [options _]
                     (keyword (:type options))))
@@ -9,8 +11,12 @@
   (log/info data))
 
 (defmethod notify! :webhook
-  [{:keys [url]} data]
-  (log/info (str "calling URL: " url " with " data)))
+  [{:keys [url method]} data]
+  (do
+    (log/info (str method " : " url " : " data))
+    (if (= (lower-case method) "get")
+      (http/get url {:query-params data})
+      (http/post url {:body data}))))
 
 (defmethod notify! :email
   [{:keys [recipient subject]} data]

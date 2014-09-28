@@ -1,34 +1,289 @@
 <!doctype html>
-<html class="no-js" lang="">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Tourbillon | your workflow, managed</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+<!--[if IE 9]><html class="lt-ie10" lang="en" > <![endif]-->
+  <html>
+    <head>
+      <meta charset="utf-8"/>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+      <title>Tourbillon | your workflow, managed</title>
+      <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+      <link rel="stylesheet" href="/assets/css/foundation.css"/>
+    </head>
+    <body>
+      <div class="row">
+        <div class="large-9 columns">
+            <h1>Tourbillon:</h1>
+            <h2>Schedule as a Service</h2>
+        </div>
 
-    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
-    <link rel="stylesheet" href="/assets/css/reset.css">
-    <link rel="stylesheet" href="/assets/css/main.css">
-  </head>
-  <body>
-    <!--[if lt IE 8]>
-        <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
-    <![endif]-->
+        <div class="large-3 columns">
+          <iframe src="http://ghbtns.com/github-btn.html?user=clojurecup2014&repo=tourbillon&type=watch&count=true&size=large"
+  allowtransparency="true" frameborder="0" scrolling="0" width="170" height="30"></iframe>
+        </div>
+      </div>
+      <hr/>
 
-    <h1>Tourbillon - Managed workflow as a service</h1>
-    <h3>by &lambda; code</h3>
+      <div class="row">
+        <div class="large-4 columns">
+          <div style="text-align: center"><img src="/assets/img/time2.png"/></div>
+          <h4>Reminders and triggers</h4>
+          <p>Setting up scheduled tasks in your application is hard work, and downtime
+          may mean missed events! Offload your scheduling to us, and spend more time
+          developing your killer app.</p>
+        </div>
+        <div class="large-4 columns">
+          <div style="text-align: center"><img src="/assets/img/time1.png"/></div>
+          <h4>Cron-like scheduling</h4>
+          <p>Schedule events whenever you like, up to once per second. Perhaps you
+          need something more accurate or reliable for scheduled events. Maybe your
+          app is running on a constrained environment where you do not have access
+          to a scheduling daemon. Tourbillon works like... err, clockwork!</p>
+        </div>
+        <div class="large-4 columns">
+          <div style="text-align: center"><img src="/assets/img/event1.png"/></div>
+          <h4>Event-based workflows</h4>
+          <p>Tourbillon is not <em>just</em> a scheduler. Under the hood is a
+          sophisticated engine for modeling event-based workflows. If your app
+          needs to handle transactions that occur over a long period of time or
+          have complex state transitions, we can handle that. Just create a workflow
+          and start sending events, and we'll take care of the rest.</p>
+        </div>
+      </div>
+      <hr/>
 
-    <p>More info coming soon</p>
+      <div class="row">
+        <div class="large-12 columns">
+          <a id="example-use-case"></a>
+          <h2>Example Use Case</h2>
+          <p>Imagine a grading application where a student can write drafts of her paper
+          and submit them to her instructor. Depending on the grade that the instructor
+          assigns, the student may pass, revise her draft, rewite it entirely, or fail.
+          additionally, notifications should be sent to the student and/or her 
+          instructor at certain points in the process. The diagram below illustrates this workflow as a <a href="http://en.wikipedia.org/wiki/Finite-state_machine">finite-state machine</a></p>
+          <p><img src="/assets/img/workflow-drafts.png"/></p>
+        </div>
+      </div>
+      <hr/>
 
-    <script>
-      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+      <div class="row">
+        <div class="large-12 columns"></div>
+          <h2>API Documenation</h2>
+          <p>The current API expects all POST'd data to be delivered with
+          a JSON request body with a <code>Content-Type: application/json</code>
+          header. The response will be delivered in JSON as well.</p>
 
-      ga('create', 'UA-47033457-3', 'auto');
-      ga('send', 'pageview');
+          <p><small>Note that the API is</small> running on the same server as
+          this site and is not secured, so you can experiment with the api at
+          <code>http://tourbillon.clojurecup.com/api/</code>.</p>
 
-    </script>
-  </body>
-</html>
+          <div>
+            <h3>Events</h3>
+            <dl>
+              <dt>Action</dt>
+              <dd>Schedule event</dd>
+
+              <dt>Endpoint</dt>
+              <dd><code>/api/events</code></dd>
+
+              <dt>Method</dt>
+              <dd><code>POST</code></dd>
+
+              <dt>Required parameters</dt>
+              <dd>at, subscriber</dd>
+
+              <dt>Optional parameters</dt>
+              <dd>every, data</dd>
+            </dl>
+
+            <h4>Sample request</h4>
+            <p>Schedules a one-time event starting at timestamp 1411945596 that will
+            perform a GET request to the given URL with <code>data</code> serialized
+            as query parameters.</p>
+            <pre>
+{
+  "at": 1411945596,
+  "subscriber": {
+    "type": "webhook",
+    "url": "http://example.com/some/endpoint",
+    "method": "GET"
+  },
+  "data": {
+    "category": "defect",
+    "severity": 2,
+    "reporter": "ameredith"
+  }
+}
+            </pre>
+            <p>Had an <code>every</code> parameter been supplied, the event would continue firing at an interval of <code>every</code> seconds after the
+            initial event</p>
+          </div>
+
+          <div>
+            <h3>Jobs</h3>
+            <dl>
+              <dt>Action</dt>
+              <dd>Create job</dd>
+              
+              <dt>Endpoint</dt>
+              <dd><code>/api/jobs</code></dd>
+
+              <dt>Method</dt>
+              <dd><code>POST</code></dd>
+
+              <dt>Required parameters</dt>
+              <dd>transitions, current-state</dd>
+            </dl>
+
+            <h4>Sample request</h4>
+            <p>Creates a workflow for the <a href="#example-use-case">Example Use Case</a> diagram above.</p>
+
+            <p><small>Note that the email subscriber used below is not yet implemented.</small></p>
+            <pre>
+{
+  "transitions": [
+    {
+      "from": "start",
+      "to": "drafted",
+      "on": "write",
+      "subscribers": [
+        {
+          "type": "email",
+          "recipient": "student@example.com"
+        }
+      ]
+    },
+    {
+      "from": "drafted",
+      "to": "submitted",
+      "on": "submit",
+      "subscribers": [
+        {
+          "type": "email",
+          "recipient": "instructor@example.com"
+        }
+      ]
+    },
+    {
+      "from": "submitted",
+      "to": "passed",
+        "on": "grade:a",
+      "subscribers": [
+        {
+          "type": "email",
+          "recipient": "student@example.com"
+        }
+      ]
+    },
+    {
+      "from": "submitted",
+      "to": "passed",
+        "on": "grade:b",
+      "subscribers": [
+        {
+          "type": "email",
+          "recipient": "student@example.com"
+        }
+      ]
+    },
+    {
+      "from": "submitted",
+      "to": "drafted",
+        "on": "grade:c",
+      "subscribers": [
+        {
+          "type": "email",
+          "recipient": "student@example.com"
+        }
+      ]
+    },
+    {
+      "from": "submitted",
+      "to": "start",
+        "on": "grade:d",
+      "subscribers": [
+        {
+          "type": "email",
+          "recipient": "student@example.com"
+        }
+      ]
+    },
+    {
+      "from": "submitted",
+      "to": "fail",
+        "on": "grade:f",
+      "subscribers": [
+        {
+          "type": "email",
+          "recipient": "student@example.com"
+        }
+      ]
+    }
+  ],
+  "current-state": "start"
+}
+          </pre>
+
+
+          <dl>
+              <dt>Action</dt>
+              <dd>Update job state</dd>
+              
+              <dt>Endpoint</dt>
+              <dd><code>/api/jobs/id</code></dd>
+
+              <dt>Method</dt>
+              <dd><code>POST</code></dd>
+
+              <dt>Required parameters</dt>
+              <dd>event, data</dd>
+            </dl>
+
+            <h4>Sample request</h4>
+            <p>Updates the workflow above from the "started" to "drafted" state.</p>
+
+            <pre>
+{
+  "event": "draft",
+  "data": {
+    "subject": "First draft complete [EOM]"
+  }
+}
+          </pre>
+        </div>
+      </div>
+
+      <footer class="row">
+      <div class="large-12 columns">
+        <hr/>
+        <div class="row">
+          <div class="large-6 columns">
+            <p>&copy; 2014 Andrew Meredith.</p>
+          </div>
+          <div class="large-6 columns">
+            <p>Visit our <a href="https://github.com/clojurecup2014/tourbillon" tarbet="_blank">project on GitHub</a> for more info.</p>
+          </div>
+        </div>
+      </div>
+      </footer>
+      <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-47033457-3', 'auto');
+        ga('send', 'pageview');
+
+      </script>
+      <script src="/assets/js/jquery.js"></script>
+      <script src="/assets/js/foundation.js"></script>
+      <script src="/assets/js/underscore-min.js"></script>
+      <script src="/assets/js/backbone-min.js"></script>
+      <script src="/assets/js/app.js"></script>
+      <script>
+        $(document).foundation();
+
+        var doc = document.documentElement;
+        doc.setAttribute('data-useragent', navigator.userAgent);
+      </script>
+    </body>
+  </html>

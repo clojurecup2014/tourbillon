@@ -13,7 +13,6 @@
             [tourbillon.storage.object :refer :all]
             [taoensso.timbre :as log]))
 
-
 (defn app-routes [job-store scheduler]
   (routes
     (GET "/" [] (content-type

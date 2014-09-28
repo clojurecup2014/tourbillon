@@ -1,12 +1,6 @@
-# tourbillon
+# Tourbillon: scheduling as a service
 
-*Description w/ buzzwords:* An event-driven, distributed, fault-tolerent, near-real-time, cloud-based scheduling and workflow service.
-
-*Real description:* A web service for managing application workflows. Uses include triggered emails, multi-party workflows, and TODO. I suppose you could even use it as a parser engine!
-
-## Concepts
-
-TODO
+Tourbillon is a web service for managing scheduled tasks and event-based workflows. Uses include triggered emails, multi-party transactions, and recurring reminders. I suppose you could even use it as a parser engine!
 
 ## Usage
 

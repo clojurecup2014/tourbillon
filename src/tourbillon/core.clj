@@ -1,10 +1,18 @@
 (ns tourbillon.core
-  (:require [tourbillon.www.core :as www]
+  (:require [tourbillon.www.core :refer [new-server]]
+            [tourbillon.event.store :refer [new-store]]
+            [tourbillon.schedule.core :refer [new-scheduler]]
+            [tourbillon.schedule.queue :refer [new-queue]]
+            [overtone.at-at :refer [mk-pool]]
             [com.stuartsierra.component :as component]))
 
 (defn system [config-options]
-  (let [{:keys [workers webserver ip port]} config-options]
+  (let [{:keys [webserver ip port]} config-options]
     (component/system-map
       :config-options config-options
-      :workers workers
-      :webserver (if webserver (www/new-server ip port) nil))))
+      :webserver (if webserver (new-server ip port) nil)
+      :event-store (new-store (atom {}))
+      :queue (new-queue)
+      :scheduler (component/using
+                   (new-scheduler 1000 (mk-pool))
+                   [:queue :event-store]))))

@@ -7,8 +7,7 @@
 
 (defn init []
   (alter-var-root #'system
-    (constantly (core/system {:workers 1
-                              :webserver true
+    (constantly (core/system {:webserver true
                               :ip "0.0.0.0"
                               :port 3000}))))
 

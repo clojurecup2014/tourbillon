@@ -1,5 +1,8 @@
 (ns user
   (:require [tourbillon.core :as core]
+            [tourbillon.event.core :as event]
+            [tourbillon.schedule.core :as schedule]
+            [tourbillon.event.store :refer (get-time)]
             [com.stuartsierra.component :as component]
             [clojure.tools.namespace.repl :refer [refresh]]))
 

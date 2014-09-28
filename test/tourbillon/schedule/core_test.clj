@@ -47,7 +47,7 @@
         e-recurring (create-event "event-id" :job-id 5 10 {})
         queue (atom [])
         event-store {:map-atom (atom {})
-                     :last-check 4}
+                     :last-check (atom 4)}
         scheduler {:queue queue
                    :event-store event-store}]
 

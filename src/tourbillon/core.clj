@@ -3,6 +3,7 @@
             [tourbillon.event.store :refer [new-store]]
             [tourbillon.schedule.core :refer [new-scheduler]]
             [tourbillon.schedule.queue :refer [new-queue]]
+            [tourbillon.workflow.jobs :refer [new-jobstore]]
             [overtone.at-at :refer [mk-pool]]
             [com.stuartsierra.component :as component]))
 
@@ -11,6 +12,7 @@
     (component/system-map
       :config-options config-options
       :webserver (if webserver (new-server ip port) nil)
+      :job-store (new-jobstore {:type :local})
       :event-store (new-store (atom {}))
       :queue (new-queue)
       :scheduler (component/using

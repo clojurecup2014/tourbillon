@@ -9,7 +9,7 @@
 
 (use-fixtures :once with-stubbed-time)
 
-(deftest test-sending-events
+#_(deftest test-sending-events
   (let [e-immediate (create-event "event-id" :job-id {})
         e-future (create-event "event-id" :job-id 10 {})
         e-recurring (create-event "event-id" :job-id 10 5 {})
@@ -42,7 +42,7 @@
                           first)))
       (update-in event-store [:map-atom] reset! {}))))
 
-(deftest test-processing-events
+#_(deftest test-processing-events
   (let [e-scheduled (create-event "event-id" :job-id 5 {})
         e-recurring (create-event "event-id" :job-id 5 10 {})
         queue (atom [])

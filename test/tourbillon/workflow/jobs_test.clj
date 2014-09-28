@@ -13,6 +13,11 @@
 
 (use-fixtures :each with-local-jobstore)
 
+(defn mk-test-event [id job]
+  {:id id
+   :job-id (:id job)
+   :data {}})
+
 (deftest test-local-jobstore
   (testing "Assigns id to job on save"
     (let [job (create-job nil [] nil)
@@ -38,10 +43,10 @@
                      (create-transition :bar :baz "bar->baz")]
         job (save-job! *jobstore* (create-job nil transitions :foo))]
 
-    (testing "changes states when event matches transition"
-      (let [new-job (receive-event! *jobstore* job "foo->bar")]
-        (is (= :bar (:current-state new-job)))))
-
     (testing "does not change state when event does not match transition"
-      (let [new-job (receive-event! *jobstore* job "bar->baz")]
-        (is (= :foo (:current-state new-job)))))))
+      (let [new-job (emit! *jobstore* (mk-test-event "bar->baz" job))]
+        (is (= :foo (:current-state new-job)))))
+
+    (testing "changes states when event matches transition"
+      (let [new-job (emit! *jobstore* (mk-test-event "foo->bar" job))]
+        (is (= :bar (:current-state new-job)))))))

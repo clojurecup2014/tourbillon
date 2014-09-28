@@ -1,7 +1,7 @@
 (ns tourbillon.schedule.core
   (:require [tourbillon.event.core :refer :all]
             [tourbillon.event.store :refer [store-event! get-events get-time]]
-            [tourbillon.schedule.queue :refer [enqueue!]]
+            [tourbillon.workflow.jobs :refer [emit!]]
             [com.stuartsierra.component :as component]
             [overtone.at-at :as at]
             [taoensso.timbre :as log]))
@@ -13,37 +13,37 @@
       :delayed)))
 
 (defmethod send-event! :immediate [scheduler event]
-  (let [queue (:queue scheduler)]
-    (enqueue! queue event)))
+  (let [job-store (:job-store scheduler)]
+    (emit! job-store event)))
 
 (defmethod send-event! :delayed [scheduler event]
   (let [event-store (:event-store scheduler)]
     (store-event! event-store event)))
 
 (defn process-events!
-  "Gets any new events from the event store and enqueues them"
-  [{:keys [queue event-store]}]
+  "Gets any new events from the event store and sends them to their respective jobs"
+  [{:keys [job-store event-store]}]
   (let [events (get-events event-store (get-time))]
     (when-not (empty? events)
       (doseq [event events]
-        (enqueue! queue event)
+        (emit! job-store event)
         (when (is-recurring? event)
           (store-event! event-store (next-interval event)))))))
 
-(defrecord Scheduler [poll-freq thread-pool queue event-store scheduler]
+(defrecord Scheduler [poll-freq thread-pool job-store event-store scheduler]
   component/Lifecycle
 
   (start [component]
     (log/info "Starting scheduler")
     (let [sched (at/every poll-freq #(process-events! component) thread-pool)]
       (assoc component :scheduler sched
-                       :queue queue
+                       :job-store job-store
                        :event-store event-store)))
 
   (stop [component]
     (log/info "Stopping scheduler")
         (at/stop scheduler)
-        (dissoc component :scheduler :queue :event-store)))
+        (dissoc component :scheduler :job-store :event-store)))
 
 (defn new-scheduler [poll-freq thread-pool]
   (map->Scheduler {:poll-freq poll-freq

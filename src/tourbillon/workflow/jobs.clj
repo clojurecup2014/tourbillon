@@ -9,10 +9,12 @@
   (save-job! [this job])
   (update-job! [this job fun]))
 
-(defrecord Transition [from to on subscribers])
 (defn create-transition
   ([from to on] (create-transition from to on []))
-  ([from to on subscribers] (Transition. from to on subscribers)))
+  ([from to on subscribers] {:from from
+                             :to to
+                             :on on
+                             :subscribers subscribers}))
 
 (defrecord Job [id transitions current-state])
 (defn create-job [id transitions current-state]
@@ -20,18 +22,22 @@
 
 (defn get-valid-transition [job event]
   (let [transitions (:transitions job)
-        current-state (:current-state job)]
+        current-state (:current-state job)
+        event-id (:id event)]
     (first
-      (filter #(and (= (:on %) event)
+      (filter #(and (= (:on %) event-id)
                     (= (:from %) current-state))
               transitions))))
 
-(defn receive-event! [jobstore job event]
-  (if-let [transition (get-valid-transition job event)]
-    (let [new-job (update-job! jobstore job #(assoc % :current-state (:to transition)))]
-      (subscribers/notify-all! (:subscribers transition))
-      new-job)
-    job))
+;; TODO: the responsibility of updating the job in the jobstore does not
+;; seem natural here. See if there is a better place to refactor it.
+(defn emit! [jobstore event]
+  (when-let [job (find-job jobstore (:job-id event))]
+    (if-let [transition (get-valid-transition job event)]
+      (let [new-job (update-job! jobstore job #(assoc % :current-state (:to transition)))]
+        (subscribers/notify-all! (:subscribers transition))
+        new-job)
+      job)))
 
 (defrecord InMemoryJobStore [db autoincrement]
   component/Lifecycle

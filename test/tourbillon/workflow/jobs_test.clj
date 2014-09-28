@@ -52,10 +52,10 @@
 
 (deftest test-creating-jobs-from-workflows
   (testing "Creates job using workflow as blueprint"
-    (let [workflow (save! *workflowstore* (create-workflow nil [] nil))
+    (let [workflow (save! *workflowstore* (create-workflow nil [] :a-state))
           job (Workflow->Job workflow)]
       (is (nil? (:id job)))
-      (is (not= job workflow)))))
+      (is (= :a-state (:current-state job))))))
 
 (deftest test-state-transitioning
   (let [transitions [(create-transition :foo :bar "foo->bar")

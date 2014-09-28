@@ -1,5 +1,6 @@
 (ns tourbillon.www.core
-  (:require [com.stuartsierra.component :as component]
+  (:require [tourbillon.www.api :refer [api-routes]]
+            [com.stuartsierra.component :as component]
             [org.httpkit.server :as server]
             [compojure.core :refer :all]
             [compojure.route :as route]
@@ -13,6 +14,7 @@
                 (resource-response "index.html" {:root "public"})
                 "text/html"))
   (route/resources "/assets")
+  (context "/api" [] api-routes)
   (route/not-found "<h2>Still haven't found what you're lookin' for?</h2>"))
 
 (def app

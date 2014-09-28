@@ -1,6 +1,7 @@
 (ns tourbillon.workflow.jobs
   (:require [tourbillon.workflow.subscribers :as subscribers]
-            [tourbillon.storage.object :refer [find-by-id update!]]))
+            [tourbillon.storage.object :refer [find-by-id update!]]
+            [clojure.set :refer [rename-keys]]))
 
 (defn create-transition
   ([from to on] (create-transition from to on []))
@@ -21,6 +22,7 @@
   (-> workflow
     (into {})
     (dissoc :id)
+    (rename-keys {:start-state :current-state})
     map->Job))
 
 (defn get-valid-transition [job event]
@@ -38,6 +40,6 @@
   (when-let [job (find-by-id jobstore (:job-id event))]
     (if-let [transition (get-valid-transition job event)]
       (let [new-job (update! jobstore job #(assoc % :current-state (:to transition)))]
-        (subscribers/notify-all! (:subscribers transition))
+        (subscribers/notify-all! (:subscribers transition) (:data event))
         new-job)
       job)))

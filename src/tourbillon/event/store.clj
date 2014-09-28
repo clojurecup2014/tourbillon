@@ -30,7 +30,7 @@
 (defn get-events [store timestamp]
   (let [map-atom (:map-atom store)
         last-check (:last-check store)
-        all-timestamps (range @last-check (inc timestamp))
+        all-timestamps (range @last-check timestamp)
         events (mapcat #(get @map-atom % (list)) all-timestamps)]
     (swap! map-atom #(apply dissoc % all-timestamps))
     (reset! last-check timestamp)

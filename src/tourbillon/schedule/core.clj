@@ -14,10 +14,12 @@
 
 (defmethod send-event! :immediate [scheduler event]
   (let [job-store (:job-store scheduler)]
+    (log/info ["processing event now" event])
     (emit! job-store event)))
 
 (defmethod send-event! :delayed [scheduler event]
   (let [event-store (:event-store scheduler)]
+    (log/info ["processing event later" event])
     (store-event! event-store event)))
 
 (defn process-events!

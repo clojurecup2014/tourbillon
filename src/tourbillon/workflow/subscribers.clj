@@ -2,7 +2,7 @@
   (:require [taoensso.timbre :as log]))
 
 (defmulti notify! (fn [options _]
-                    (:type options)))
+                    (keyword (:type options))))
 
 (defmethod notify! :logger
   [_ data]

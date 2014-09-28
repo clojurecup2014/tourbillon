@@ -8,10 +8,9 @@
             [com.stuartsierra.component :as component]))
 
 (defn system [config-options]
-  (let [{:keys [webserver ip port]} config-options]
+  (let [{:keys [ip port]} config-options]
     (component/system-map
       :config-options config-options
-      :webserver (if webserver (new-server ip port) nil)
       :job-store (new-object-store {:type :local
                                     :db (atom {})
                                     :serialize-fn (partial into {})
@@ -23,4 +22,7 @@
       :event-store (new-store (atom {}))
       :scheduler (component/using
                    (new-scheduler 1000 (mk-pool))
-                   [:job-store :event-store]))))
+                   [:job-store :event-store])
+      :webserver (component/using
+                   (new-server ip port)
+                   [:job-store :scheduler]))))

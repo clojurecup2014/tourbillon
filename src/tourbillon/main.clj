@@ -12,9 +12,8 @@
   "Start application with a given number of worker processes and optionally
   a webserver for a sample client application."
   [& args]
-  (let [[webserver ip port] args]
+  (let [[ip port] args]
     (log/info "Starting system")
     (component/start
-     (system {:webserver (= "true" webserver)
-              :ip ip
+     (system {:ip ip
               :port (read-string port)}))))

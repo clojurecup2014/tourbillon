@@ -19,7 +19,7 @@
 
   ObjectStore
   (find-by-id [this id]
-    (-> @db
+    (some-> @db
       (get id)
       unserialize-fn))
 
